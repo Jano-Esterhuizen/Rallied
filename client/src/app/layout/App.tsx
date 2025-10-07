@@ -7,6 +7,7 @@ import ActivityDashboard from "../../features/activities/dashboard/ActivityDashb
 function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
+  const[editMode, setEditMode] = useState(false)
 
   useEffect(() => {
     axios.get<Activity[]>('https://localhost:5001/api/activities')
@@ -23,6 +24,16 @@ function App() {
     setSelectedActivity(undefined)
   }
 
+  const handleOpenForm = (id?: string) => {
+    if (id) handleSelectActivity(id);
+    else handleCancelSelectActivity();
+    setEditMode(true)
+  }
+
+  const handleFormClose = () => {
+    setEditMode(false)
+  }
+
 
   return (
     <>
@@ -30,13 +41,16 @@ function App() {
       <CssBaseline/> 
     {/* Used to remove padding around the NavBar, Normalize styles across browsers
     Removes inconsistencies in things like default margins, font sizes, and line heights. */}
-      <NavBar/>
+      <NavBar openForm={handleOpenForm} />
       <Container maxWidth='xl' sx={{mt: 3}}>
         <ActivityDashboard 
           activities={activities} 
           selectActivity={handleSelectActivity}
           cancelSelectActivity={handleCancelSelectActivity}
           selectedActivity={selectedActivity}
+          editMode={editMode}
+          openForm={handleOpenForm}
+          closeForm={handleFormClose}
         />
 
       </Container>
